@@ -2,6 +2,12 @@
 
 Allows authenticated or anonymous users to fill out a standard web form to create GitHub issues.
 
+## How it works
+
+1. You create a standard HTML form, defining what fields you'd like a given authenticated or anonymous user to fill out
+2. They go to a hosted URL and fill out the form
+3. The fields are converted to markdown bullets and inserted into the body of a new issue created against the GitHub repo you specify
+
 ## Usage
 
 1. Create a `Gemfile` and add `gem "problem_child"`
