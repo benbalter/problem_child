@@ -1,0 +1,13 @@
+{
+  "name": "problem_child",
+  "version": "0.0.1",
+  "authors": [
+    "Ben Balter <ben.balter@github.com>"
+  ],
+  "main": "config.ru",
+  "license": "MIT",
+  "homepage": "https://github.com/benbalter/problem_child",
+  "dependencies": {
+    "bootstrap": "~3.3.1"
+  }
+}

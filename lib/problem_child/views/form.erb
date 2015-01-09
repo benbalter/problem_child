@@ -1,0 +1,22 @@
+<h1>Submit an issue to <% if anonymous %>
+  <%= repo %>
+<% else %>
+  <a href="https://github.com/<%= repo %>"><%= repo %></a>
+<% end %>
+</h1>
+
+<% if flash && flash == :success %>
+  <div class="alert alert-success" role="alert">Your issue was successfully submitted.</div>
+<% end %>
+
+<form method="post">
+  <div class="form-group">
+    <label for="title">Title</label>
+    <input type="text" class="form-control" id="title" name="title" />
+  </div>
+  <div class="form-group">
+    <label for="body">Body</label>
+    <textarea class="form-control" rows="10" id="body" name="body"></textarea>
+  </div>
+  <button type="submit" class="btn btn-default">Submit</button>
+</form>

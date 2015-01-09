@@ -1,0 +1,10 @@
+*.gem
+.bundle
+Gemfile.lock
+.env
+
+#bower bloat
+lib/problem_child/public/vendor/bootstrap/grunt
+lib/problem_child/public/vendor/bootstrap/less
+lib/problem_child/public/vendor/bootstrap/test-infra
+lib/problem_child/public/vendor/jquery/src
