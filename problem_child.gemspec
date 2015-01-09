@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "sinatra", "~> 1.4"
-  spec.add_dependency "octokit", "~> 2.1"
+  spec.add_dependency "octokit", "~> 3.7"
   spec.add_dependency "dotenv", "~> 1.0"
   spec.add_dependency "rack-ssl-enforcer", "~> 0.2"
   spec.add_dependency "sinatra_auth_github", "~> 1.0"
