@@ -2,6 +2,8 @@
 
 Allows authenticated or anonymous users to fill out a standard web form to create GitHub issues.
 
+[![Build Status](https://travis-ci.org/benbalter/problem_child.svg)](https://travis-ci.org/benbalter/problem_child)
+
 ## How it works
 
 1. You create a standard HTML form, defining what fields you'd like a given authenticated or anonymous user to fill out

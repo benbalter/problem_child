@@ -6,6 +6,7 @@ require 'json'
 require 'active_support'
 require 'active_support/core_ext/string'
 require "problem_child/version"
+require "problem_child/helpers"
 
 module ProblemChild
 
@@ -23,16 +24,15 @@ module ProblemChild
 
   class App < Sinatra::Base
 
-    enable :sessions
+    include ProblemChild::Helpers
 
     set :github_options, {
-      :scopes    => "repo",
-      :secret    => ENV['GITHUB_CLIENT_SECRET'],
-      :client_id => ENV['GITHUB_CLIENT_ID'],
+      :scopes    => "repo"
     }
 
     register Sinatra::Auth::Github
 
+    enable :sessions
     use Rack::Session::Cookie, {
       :http_only => true,
       :secret    => SecureRandom.hex
@@ -44,62 +44,8 @@ module ProblemChild
     end
 
     set :views, Proc.new { ProblemChild.views_dir }
-    set :root, Proc.new { ProblemChild.root }
+    set :root,  Proc.new { ProblemChild.root }
     set :public_folder, Proc.new { File.expand_path "public", ProblemChild.root }
-
-    def repo
-      ENV["GITHUB_REPO"]
-    end
-
-    def user
-      env['warden'].user unless env['warden'].nil?
-    end
-
-    def anonymous_submissions?
-      ENV["GITHUB_TOKEN"] && !ENV["GITHUB_TOKEN"].empty?
-    end
-
-    def token
-      if anonymous_submissions?
-        ENV["GITHUB_TOKEN"]
-      elsif !user.nil?
-        user.token
-      end
-    end
-
-    def client
-      @client ||= Octokit::Client.new :access_token => token
-    end
-
-    def render_template(template, locals={})
-      halt erb template, :layout => :layout, :locals => locals.merge({ :template => template })
-    end
-
-    def issue_body
-      form_data.reject { |key, value| key == "title" || value.empty? }.map { |key,value| "* **#{key.humanize}**: #{value}"}.join("\n")
-    end
-
-    # abstraction to allow cached form data to be used in place of default params
-    def form_data
-      session["form_data"].nil? ? params : JSON.parse(session["form_data"])
-    end
-
-    def create_issue
-      client.create_issue(repo, form_data["title"], issue_body)
-    end
-
-    def auth!
-      if anonymous_submissions?
-        true
-      elsif ENV['GITHUB_TEAM_ID']
-        github_team_authenticate!(ENV['GITHUB_TEAM_ID'])
-      elsif ENV['GITHUB_ORG_ID']
-        github_organization_authenticate!(ENV['GITHUB_ORG_ID'])
-      else
-        raise "Must define GITHUB_TEAM_ID, GITHUB_ORG_ID, OR GITHUB_TOKEN"
-        halt 401
-      end
-    end
 
     get "/" do
       if session[:form_data]
@@ -113,12 +59,9 @@ module ProblemChild
     end
 
     post "/" do
-      if anonymous_submissions?
-        create_issue
-      else
-        session[:form_data] = params.to_json
-        auth!
-      end
+      session[:form_data] = params.to_json
+      auth! unless anonymous_submissions?      
+      halt redirect "/"
     end
   end
 end
