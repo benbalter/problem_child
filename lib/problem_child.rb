@@ -27,15 +27,16 @@ module ProblemChild
     include ProblemChild::Helpers
 
     set :github_options, {
-      :scopes    => "repo"
+      :scopes => "repo,read:org"
     }
 
+    ENV['WARDEN_GITHUB_VERIFIER_SECRET'] ||= SecureRandom.hex
     register Sinatra::Auth::Github
 
     enable :sessions
     use Rack::Session::Cookie, {
       :http_only => true,
-      :secret    => SecureRandom.hex
+      :secret    => ENV['SESSION_SECRET'] || SecureRandom.hex
     }
 
     configure :production do
@@ -60,7 +61,7 @@ module ProblemChild
 
     post "/" do
       session[:form_data] = params.to_json
-      auth! unless anonymous_submissions?      
+      auth! unless anonymous_submissions?
       halt redirect "/"
     end
   end
