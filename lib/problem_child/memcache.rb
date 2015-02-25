@@ -1,6 +1,11 @@
 module ProblemChild
-  module MemcacheHelper
-    def memcache_options
+  class Memcache
+
+    def self.client
+      Dalli::Client.new(server, options)
+    end
+
+    def self.options
       {
        :username => ENV["MEMCACHIER_USERNAME"],
        :password => ENV["MEMCACHIER_PASSWORD"],
@@ -10,7 +15,7 @@ module ProblemChild
       }
     end
 
-    def memcache_server
+    def self.server
       ENV["MEMCACHIER_SERVERS"].split(",") unless ENV["MEMCACHIER_SERVERS"].to_s.blank?
     end
   end

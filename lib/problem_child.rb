@@ -9,7 +9,7 @@ require 'active_support'
 require 'active_support/core_ext/string'
 require "problem_child/version"
 require "problem_child/helpers"
-require "problem_child/memcache_helper"
+require "problem_child/memcache"
 
 module ProblemChild
 
@@ -28,10 +28,9 @@ module ProblemChild
   class App < Sinatra::Base
 
     include ProblemChild::Helpers
-    extend  ProblemChild::MemcacheHelper
-    
+
     configure do
-      use Rack::Session::Dalli, cache: Dalli::Client.new(memcache_server, memcache_options)
+      use Rack::Session::Dalli, cache: ProblemChild::Memcache.client
     end
 
     set :github_options, {

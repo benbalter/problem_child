@@ -2,19 +2,15 @@ require "spec_helper"
 
 describe "ProblemChild::MemcacheHelper" do
 
-  class TestHelper
-    extend ProblemChild::MemcacheHelper
-  end
-
   it "knows the server" do
     with_env "MEMCACHIER_SERVERS", "localhost:1234" do
-      expect(TestHelper.memcache_server).to eql(["localhost:1234"])
+      expect(ProblemChild::Memcache.server).to eql(["localhost:1234"])
     end
   end
 
   it "can process multiple servers" do
     with_env "MEMCACHIER_SERVERS", "localhost:1234, localhost:4567" do
-      expect(TestHelper.memcache_server).to eql(["localhost:1234", " localhost:4567"])
+      expect(ProblemChild::Memcache.server).to eql(["localhost:1234", " localhost:4567"])
     end
   end
 
@@ -28,8 +24,12 @@ describe "ProblemChild::MemcacheHelper" do
                      :socket_timeout => 1.5,
                      :socket_failure_delay => 0.2
                    }
-        expect(TestHelper.memcache_options).to eql(expected)
+        expect(ProblemChild::Memcache.options).to eql(expected)
       end
     end
+  end
+
+  it "returns the client" do
+    expect(ProblemChild::Memcache.client.class).to eql(Dalli::Client)
   end
 end
