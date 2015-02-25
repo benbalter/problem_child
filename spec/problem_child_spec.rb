@@ -137,4 +137,23 @@ describe "logged out user" do
       end
     end
   end
+
+  it "supports submissions > 4k" do
+    with_env "GITHUB_TOKEN", "1234" do
+      with_env "GITHUB_REPO", "benbalter/test-repo-ignore-me" do
+        long_string =  "0" * 5000
+
+        stub_request(:post, "https://api.github.com/repos/benbalter/test-repo-ignore-me/issues").
+          with(:body => "{\"labels\":[],\"title\":\"title\",\"body\":\"* **Foo**: #{long_string}\"}").
+          to_return(:status => 200)
+
+
+        post "/", :title => "title", :foo => long_string
+        follow_redirect!
+
+        expect(last_response.status).to eql(200)
+        expect(last_response.body).to match(/Your issue was successfully submitted/)
+      end
+    end
+  end
 end

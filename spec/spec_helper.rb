@@ -15,6 +15,9 @@ RSpec.configure do |config|
   config.include(Sinatra::Auth::Github::Test::Helper)
 end
 
+ENV["GITHUB_CLIENT_ID"] = "1234"
+ENV["GITHUB_CLIENT_SECRET"] = "asdf"
+
 def with_env(key, value)
   old_env = ENV[key]
   ENV[key] = value
