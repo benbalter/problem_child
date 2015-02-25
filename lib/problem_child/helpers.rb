@@ -34,10 +34,6 @@ module ProblemChild
       session["form_data"].nil? ? params : JSON.parse(session["form_data"])
     end
 
-    def session_id
-      session["session_id"]
-    end
-
     def create_issue
       client.create_issue(repo, form_data["title"], issue_body)
     end

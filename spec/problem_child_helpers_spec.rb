@@ -90,9 +90,4 @@ describe "ProblemChild::Helpers" do
       end
     end
   end
-
-  it "knows the session id" do
-    @helper.session["session_id"] = "1234"
-    expect(@helper.session_id).to eql("1234")
-  end
 end
