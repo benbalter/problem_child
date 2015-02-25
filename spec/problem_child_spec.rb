@@ -107,9 +107,11 @@ describe "logged out user" do
 
   it "asks the user to log in" do
     with_env "GITHUB_ORG_ID", "balter-test-org" do
-      get "/"
-      expect(last_response.status).to eql(302)
-      expect(last_response.headers['Location']).to match(%r{^https://github\.com/login/oauth/authorize})
+      with_env "GITHUB_TOKEN", nil do
+        get "/"
+        expect(last_response.status).to eql(302)
+        expect(last_response.headers['Location']).to match(%r{^https://github\.com/login/oauth/authorize})
+      end
     end
   end
 
@@ -130,6 +132,25 @@ describe "logged out user" do
           to_return(:status => 200)
 
         post "/", :title => "title", :foo => "bar"
+        follow_redirect!
+
+        expect(last_response.status).to eql(200)
+        expect(last_response.body).to match(/Your issue was successfully submitted/)
+      end
+    end
+  end
+
+  it "supports submissions > 4k" do
+    with_env "GITHUB_TOKEN", "1234" do
+      with_env "GITHUB_REPO", "benbalter/test-repo-ignore-me" do
+        long_string =  "0" * 5000
+
+        stub_request(:post, "https://api.github.com/repos/benbalter/test-repo-ignore-me/issues").
+          with(:body => "{\"labels\":[],\"title\":\"title\",\"body\":\"* **Foo**: #{long_string}\"}").
+          to_return(:status => 200)
+
+
+        post "/", :title => "title", :foo => long_string
         follow_redirect!
 
         expect(last_response.status).to eql(200)

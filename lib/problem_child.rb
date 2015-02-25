@@ -3,10 +3,13 @@ require 'sinatra'
 require 'sinatra_auth_github'
 require 'dotenv'
 require 'json'
+require 'dalli'
+require 'rack/session/dalli'
 require 'active_support'
 require 'active_support/core_ext/string'
 require "problem_child/version"
 require "problem_child/helpers"
+require "problem_child/memcache"
 
 module ProblemChild
 
@@ -25,6 +28,10 @@ module ProblemChild
   class App < Sinatra::Base
 
     include ProblemChild::Helpers
+
+    configure do
+      use Rack::Session::Dalli, cache: ProblemChild::Memcache.client
+    end
 
     set :github_options, {
       :scopes => "repo,read:org"
