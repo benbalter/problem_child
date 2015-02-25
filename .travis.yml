@@ -6,7 +6,9 @@ rvm:
 
 sudo: false
 cache: bundler
-
+services:
+  - redis-server
+  
 env:
   global:
     GITHUB_CLIENT_ID: "1234"
