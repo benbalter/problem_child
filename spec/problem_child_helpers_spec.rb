@@ -4,13 +4,11 @@ describe "ProblemChild::Helpers" do
 
   class TestHelper
     include ProblemChild::Helpers
-    extend  ProblemChild::RedisHelper
 
     attr_accessor :session, :params
 
     def initialize(path=nil)
       @path = path
-      TestHelper.init_redis!
     end
 
     def request
@@ -59,11 +57,9 @@ describe "ProblemChild::Helpers" do
     end
   end
 
-  it "grabs the form data from redis" do
+  it "grabs the form data from the session" do
     expected = {"title" => "title", "foo" => "bar"}
-    @helper.params = expected
-    @helper.cache_data
-    @helper.params = nil
+    @helper.session["form_data"] = expected.to_json
     expect(@helper.form_data).to eql(expected)
   end
 
@@ -98,23 +94,5 @@ describe "ProblemChild::Helpers" do
   it "knows the session id" do
     @helper.session["session_id"] = "1234"
     expect(@helper.session_id).to eql("1234")
-  end
-
-  it "can access redis" do
-    expect(@helper.redis.class).to eql(Redis)
-  end
-
-  it "caches the data" do
-    expected = {"title" => "title", "foo" => "bar"}
-    @helper.params = expected
-    @helper.cache_data
-    expect(@helper.redis.get(@helper.session_id)).to eql(expected.to_json)
-  end
-
-  it "retrieves cached data" do
-    expected = {"title" => "title", "foo" => "bar"}
-    @helper.params = expected
-    @helper.cache_data
-    expect(@helper.cached_data).to eql(expected)
   end
 end

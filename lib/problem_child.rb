@@ -3,12 +3,13 @@ require 'sinatra'
 require 'sinatra_auth_github'
 require 'dotenv'
 require 'json'
-require 'redis'
+require 'dalli'
+require 'rack/session/dalli'
 require 'active_support'
 require 'active_support/core_ext/string'
 require "problem_child/version"
 require "problem_child/helpers"
-require "problem_child/redis_helper"
+require "problem_child/memcache_helper"
 
 module ProblemChild
 
@@ -27,10 +28,10 @@ module ProblemChild
   class App < Sinatra::Base
 
     include ProblemChild::Helpers
-    extend  ProblemChild::RedisHelper
-
+    extend  ProblemChild::MemcacheHelper
+    
     configure do
-      init_redis!
+      use Rack::Session::Dalli, cache: Dalli::Client.new(memcache_server, memcache_options)
     end
 
     set :github_options, {
@@ -56,7 +57,7 @@ module ProblemChild
     set :public_folder, Proc.new { File.expand_path "public", ProblemChild.root }
 
     get "/" do
-      if cached_data
+      if session[:form_data]
         flash = :success if create_issue
         session[:form_data] = nil
       else
@@ -67,7 +68,7 @@ module ProblemChild
     end
 
     post "/" do
-      cache_data
+      session[:form_data] = params.to_json
       auth! unless anonymous_submissions?
       halt redirect "/"
     end
