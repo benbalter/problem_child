@@ -20,6 +20,14 @@ Allows authenticated or anonymous users to fill out a standard web form to creat
   ```
 3. Follow the configuration options below
 
+## Requirements
+
+You'll need to have [Memcache](http://memcached.org/) running.
+
+On OS X, run `brew install memcached` to install, followed by `memcached` to run the memcache server.
+
+On Heroku you'll want to run `heroku addons:add memcachier:dev` to add a free Memecache instance to your app.
+
 ## Configuring
 
 You must set the following as environmental variables:
