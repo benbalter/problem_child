@@ -107,9 +107,11 @@ describe "logged out user" do
 
   it "asks the user to log in" do
     with_env "GITHUB_ORG_ID", "balter-test-org" do
-      get "/"
-      expect(last_response.status).to eql(302)
-      expect(last_response.headers['Location']).to match(%r{^https://github\.com/login/oauth/authorize})
+      with_env "GITHUB_TOKEN", nil do
+        get "/"
+        expect(last_response.status).to eql(302)
+        expect(last_response.headers['Location']).to match(%r{^https://github\.com/login/oauth/authorize})
+      end
     end
   end
 

@@ -3,10 +3,12 @@ require 'sinatra'
 require 'sinatra_auth_github'
 require 'dotenv'
 require 'json'
+require 'redis'
 require 'active_support'
 require 'active_support/core_ext/string'
 require "problem_child/version"
 require "problem_child/helpers"
+require "problem_child/redis_helper"
 
 module ProblemChild
 
@@ -25,6 +27,11 @@ module ProblemChild
   class App < Sinatra::Base
 
     include ProblemChild::Helpers
+    extend  ProblemChild::RedisHelper
+
+    configure do
+      init_redis!
+    end
 
     set :github_options, {
       :scopes => "repo,read:org"
@@ -49,7 +56,7 @@ module ProblemChild
     set :public_folder, Proc.new { File.expand_path "public", ProblemChild.root }
 
     get "/" do
-      if session[:form_data]
+      if cached_data
         flash = :success if create_issue
         session[:form_data] = nil
       else
@@ -60,7 +67,7 @@ module ProblemChild
     end
 
     post "/" do
-      session[:form_data] = params.to_json
+      cache_data
       auth! unless anonymous_submissions?
       halt redirect "/"
     end

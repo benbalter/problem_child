@@ -1,6 +1,8 @@
 module ProblemChild
   module Helpers
 
+    TTL = 60*5 # TTL for redis cache in seconds
+
     def repo
       ENV["GITHUB_REPO"]
     end
@@ -31,7 +33,25 @@ module ProblemChild
 
     # abstraction to allow cached form data to be used in place of default params
     def form_data
-      session["form_data"].nil? ? params : JSON.parse(session["form_data"])
+      cached_data || params
+    end
+
+    def session_id
+      session["session_id"]
+    end
+
+    def redis
+      ProblemChild::RedisHelper.class_variable_get(:@@redis)
+    end
+
+    def cache_data
+      redis.set session_id, params.to_json
+      redis.expire session_id, TTL
+    end
+
+    def cached_data
+      data = redis.get(session_id)
+      JSON.parse data unless data.nil?
     end
 
     def create_issue
