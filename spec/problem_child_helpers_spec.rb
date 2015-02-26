@@ -76,13 +76,12 @@ describe "ProblemChild::Helpers" do
   end
 
   it "submits the issue" do
-    expected = {"title" => "title", "foo" => "bar"}
-    @helper.params = expected
+    @helper.params = {"title" => "title", "foo" => "bar", "labels" => ["foo", "bar"]}
     with_env "GITHUB_TOKEN", "1234" do
       with_env "GITHUB_REPO", "benbalter/test-repo-ignore-me" do
 
         stub = stub_request(:post, "https://api.github.com/repos/benbalter/test-repo-ignore-me/issues").
-          with(:body => "{\"labels\":[],\"title\":\"title\",\"body\":\"* **Foo**: bar\"}").
+          with(:body => "{\"labels\":[\"foo\",\"bar\"],\"title\":\"title\",\"body\":\"* **Foo**: bar\"}").
           to_return(:status => 200, :body => '{"number": 1234}', :headers => { 'Content-Type' => 'application/json' })
 
         expect(@helper.create_issue).to eql(1234)
@@ -122,5 +121,10 @@ describe "ProblemChild::Helpers" do
         expect(@helper.repo_access?).to eql(false)
       end
     end
+  end
+
+  it "knows the labels" do
+    @helper.params["labels"] = ["foo", "bar"]
+    expect(@helper.labels).to eql("foo,bar")
   end
 end

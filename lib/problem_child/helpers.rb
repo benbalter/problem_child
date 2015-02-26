@@ -26,7 +26,7 @@ module ProblemChild
     end
 
     def issue_body
-      form_data.reject { |key, value| key == "title" || value.empty? }.map { |key,value| "* **#{key.humanize}**: #{value}"}.join("\n")
+      form_data.reject { |key, value| key == "title" || value.empty? || key == "labels" }.map { |key,value| "* **#{key.humanize}**: #{value}"}.join("\n")
     end
 
     # abstraction to allow cached form data to be used in place of default params
@@ -34,8 +34,12 @@ module ProblemChild
       session["form_data"].nil? ? params : JSON.parse(session["form_data"])
     end
 
+    def labels
+      form_data["labels"].join(",") if form_data["labels"]
+    end
+
     def create_issue
-      issue = client.create_issue(repo, form_data["title"], issue_body)
+      issue = client.create_issue(repo, form_data["title"], issue_body, :labels => labels)
       issue["number"] if issue
     end
 
