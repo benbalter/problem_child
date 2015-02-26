@@ -83,10 +83,43 @@ describe "ProblemChild::Helpers" do
 
         stub = stub_request(:post, "https://api.github.com/repos/benbalter/test-repo-ignore-me/issues").
           with(:body => "{\"labels\":[],\"title\":\"title\",\"body\":\"* **Foo**: bar\"}").
-          to_return(:status => 200)
+          to_return(:status => 200, :body => '{"number": 1234}', :headers => { 'Content-Type' => 'application/json' })
 
-        @helper.create_issue
+        expect(@helper.create_issue).to eql(1234)
         expect(stub).to have_been_requested
+      end
+    end
+  end
+
+  it "knows auth'd users can access a repo" do
+    stub_request(:get, "https://api.github.com/repos/benbalter/test-repo-ignore-me").
+      to_return(:status => 200, :body => '{"private": true}', :headers => { 'Content-Type' => 'application/json' })
+
+    with_env "GITHUB_TOKEN", nil do
+      with_env "GITHUB_REPO", "benbalter/test-repo-ignore-me" do
+        expect(@helper.repo_access?).to eql(true)
+      end
+    end
+  end
+
+  it "knows anonymous users can access public repos" do
+    stub_request(:get, "https://api.github.com/repos/benbalter/test-repo-ignore-me").
+      to_return(:status => 200, :body => '{"private": false}', :headers => { 'Content-Type' => 'application/json' })
+
+    with_env "GITHUB_TOKEN", "1234" do
+      with_env "GITHUB_REPO", "benbalter/test-repo-ignore-me" do
+        expect(@helper.repo_access?).to eql(true)
+      end
+    end
+  end
+
+  it "knows anonymous users can't access private repos" do
+    stub_request(:get, "https://api.github.com/repos/benbalter/test-repo-ignore-me").
+      to_return(:status => 200, :body => '{"private": true}', :headers => { 'Content-Type' => 'application/json' })
+
+    with_env "GITHUB_TOKEN", "1234" do
+      with_env "GITHUB_REPO", "benbalter/test-repo-ignore-me" do
+        expect(@helper.repo_access?).to eql(false)
       end
     end
   end

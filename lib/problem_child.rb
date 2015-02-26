@@ -57,13 +57,15 @@ module ProblemChild
 
     get "/" do
       if session[:form_data]
-        flash = :success if create_issue
+        issue = create_issue
         session[:form_data] = nil
+        access = repo_access?
       else
-        flash = nil
+        issue = nil
+        access = false
         auth!
       end
-      halt erb :form, :layout => :layout, :locals => { :repo => repo, :anonymous => anonymous_submissions?, :flash => flash }
+      halt erb :form, :layout => :layout, :locals => { :repo => repo, :anonymous => anonymous_submissions?, :issue => issue, :access => access }
     end
 
     post "/" do

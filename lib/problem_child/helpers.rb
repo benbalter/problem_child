@@ -35,7 +35,15 @@ module ProblemChild
     end
 
     def create_issue
-      client.create_issue(repo, form_data["title"], issue_body)
+      issue = client.create_issue(repo, form_data["title"], issue_body)
+      issue["number"] if issue
+    end
+
+    def repo_access?
+      return true unless anonymous_submissions?
+      !client.repository(repo)["private"]
+    rescue
+      false
     end
 
     def auth!

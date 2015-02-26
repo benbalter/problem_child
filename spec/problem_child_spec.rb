@@ -86,13 +86,14 @@ describe "logged in user" do
 
         stub_request(:post, "https://api.github.com/repos/benbalter/test-repo-ignore-me/issues").
           with(:body => "{\"labels\":[],\"title\":\"title\",\"body\":\"* **Foo**: bar\"}").
-          to_return(:status => 200)
+          to_return(:status => 200, :body => '{"number": 1234}', :headers => { 'Content-Type' => 'application/json' })
 
         post "/", :title => "title", :foo => "bar"
         follow_redirect!
 
         expect(last_response.status).to eql(200)
-        expect(last_response.body).to match(/Your issue was successfully submitted/)
+        expected = '<a href="http://github.com/benbalter/test-repo-ignore-me/issues/1234">benbalter/test-repo-ignore-me#1234</a>'
+        expect(last_response.body).to match(expected)
       end
     end
   end
@@ -129,13 +130,16 @@ describe "logged out user" do
 
         stub_request(:post, "https://api.github.com/repos/benbalter/test-repo-ignore-me/issues").
           with(:body => "{\"labels\":[],\"title\":\"title\",\"body\":\"* **Foo**: bar\"}").
-          to_return(:status => 200)
+          to_return(:status => 200, :body => '{"number": 1234}', :headers => { 'Content-Type' => 'application/json' })
+
+        stub_request(:get, "https://api.github.com/repos/benbalter/test-repo-ignore-me").
+          to_return(:status => 200, :body => '{"private": true}', :headers => { 'Content-Type' => 'application/json' })
 
         post "/", :title => "title", :foo => "bar"
         follow_redirect!
 
         expect(last_response.status).to eql(200)
-        expect(last_response.body).to match(/Your issue was successfully submitted/)
+        expect(last_response.body).to match(/Your issue was successfully submitted\./)
       end
     end
   end
@@ -147,14 +151,16 @@ describe "logged out user" do
 
         stub_request(:post, "https://api.github.com/repos/benbalter/test-repo-ignore-me/issues").
           with(:body => "{\"labels\":[],\"title\":\"title\",\"body\":\"* **Foo**: #{long_string}\"}").
-          to_return(:status => 200)
+          to_return(:status => 200, :body => '{"number": 1234}', :headers => { 'Content-Type' => 'application/json' })
 
+        stub_request(:get, "https://api.github.com/repos/benbalter/test-repo-ignore-me").
+          to_return(:status => 200, :body => '{"private": true}', :headers => { 'Content-Type' => 'application/json' })
 
         post "/", :title => "title", :foo => long_string
         follow_redirect!
 
         expect(last_response.status).to eql(200)
-        expect(last_response.body).to match(/Your issue was successfully submitted/)
+        expect(last_response.body).to match(/Your issue was successfully submitted\./)
       end
     end
   end

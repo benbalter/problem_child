@@ -5,8 +5,10 @@
 <% end %>
 </h1>
 
-<% if flash && flash == :success %>
-  <div class="alert alert-success" role="alert">Your issue was successfully submitted.</div>
+<% if issue %>
+  <div class="alert alert-success" role="alert">
+    Your issue was successfully submitted<% if access %> as <a href="http://github.com/<%= repo %>/issues/<%= issue %>"><%= repo %>#<%= issue %></a><% end %>.
+  </div>
 <% end %>
 
 <form method="post">
