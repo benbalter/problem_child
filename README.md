@@ -60,6 +60,19 @@ run ProblemChild::App
 
 *Pro-tip*: You can use any standard HTML form fields, but be sure to name one field `title`, which will become the issue title.
 
+*Pro-tip II*: Problem child can set labels. You can do this either as a hidden field:
+
+```html
+<input type="hidden" name="labels[]" value="bug" />
+```
+
+or as a checkbox:
+
+```html
+<input type="checkbox" name="labels[]" value="bug" />
+<input type="checkbox" name="labels[]" value="suggestion" />
+```
+
 ## Contributing
 
 1. Fork it ( https://github.com/[my-github-username]/problem_child/fork )
