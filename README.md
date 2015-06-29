@@ -22,11 +22,11 @@ Allows authenticated or anonymous users to fill out a standard web form to creat
 
 ## Requirements
 
-You'll need to have [Memcache](http://memcached.org/) running.
+You'll need to have [Redis](http://redis.io/) running.
 
-On OS X, run `brew install memcached` to install, followed by `memcached` to run the memcache server.
+On OS X, run `brew install redis` to install, followed by `redis-server` to run the redis server.
 
-On Heroku you'll want to run `heroku addons:add memcachier:dev` to add a free Memecache instance to your app.
+On Heroku you'll want to run `heroku addons:create heroku-redis:hobby-dev` to add a free Redis instance to your app.
 
 ## Configuring
 
@@ -72,6 +72,10 @@ or as a checkbox:
 <input type="checkbox" name="labels[]" value="bug" />
 <input type="checkbox" name="labels[]" value="suggestion" />
 ```
+
+## Creating pull requests
+
+Problem child can also be used to create pull requests. Simply add one or more file inputs to your form. The uploaded files will be committed to a newly created feature branch, and a pull request will be created against the repo's primary branch with the rest of the form content.
 
 ## Contributing
 

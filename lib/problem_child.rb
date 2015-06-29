@@ -32,7 +32,7 @@ module ProblemChild
       :scopes => "repo,read:org"
     }
 
-    use Rack::Session::Moneta, store: :Redis
+    use Rack::Session::Moneta, store: :Redis, url: ENV["REDIS_URL"]
 
     configure :production do
       require 'rack-ssl-enforcer'
