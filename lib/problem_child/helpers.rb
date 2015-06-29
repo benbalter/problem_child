@@ -68,12 +68,12 @@ module ProblemChild
     # Starts with patch-1 and keeps going until it finds one not taken
     def patch_branch
       num = 1
-      branch = form_data["title"].parameterize
-      return branch unless branch_exists?(branch)
-      branch = "patch-#{num}"
+      branch_name = form_data["title"].parameterize
+      return branch_name unless branch_exists?(branch_name)
+      branch = "#{branch_name}-#{num}"
       while branch_exists?(branch) do
         num = num + 1
-        branch = "patch-#{num}"
+        branch = "#{branch_name}-#{num}"
       end
       branch
     end

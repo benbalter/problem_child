@@ -48,7 +48,7 @@ module ProblemChild
 
     get "/" do
       if session[:form_data]
-        issue = uploads ? create_pull_request : create_issue
+        issue = uploads.empty? ? create_issue : create_pull_request
         session[:form_data] = nil
         access = repo_access?
       else
