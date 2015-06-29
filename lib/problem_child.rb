@@ -3,13 +3,12 @@ require 'sinatra'
 require 'sinatra_auth_github'
 require 'dotenv'
 require 'json'
-require 'dalli'
-require 'rack/session/dalli'
+require 'redis'
+require 'rack/session/moneta'
 require 'active_support'
 require 'active_support/core_ext/string'
 require "problem_child/version"
 require "problem_child/helpers"
-require "problem_child/memcache"
 
 module ProblemChild
 
@@ -29,27 +28,19 @@ module ProblemChild
 
     include ProblemChild::Helpers
 
-    configure do
-      use Rack::Session::Dalli, cache: ProblemChild::Memcache.client
-    end
-
     set :github_options, {
       :scopes => "repo,read:org"
     }
 
-    ENV['WARDEN_GITHUB_VERIFIER_SECRET'] ||= SecureRandom.hex
-    register Sinatra::Auth::Github
-
-    enable :sessions
-    use Rack::Session::Cookie, {
-      :http_only => true,
-      :secret    => ENV['SESSION_SECRET'] || SecureRandom.hex
-    }
+    use Rack::Session::Moneta, store: :Redis, url: ENV["REDIS_URL"]
 
     configure :production do
       require 'rack-ssl-enforcer'
       use Rack::SslEnforcer
     end
+
+    ENV['WARDEN_GITHUB_VERIFIER_SECRET'] ||= SecureRandom.hex
+    register Sinatra::Auth::Github
 
     set :views, Proc.new { ProblemChild.views_dir }
     set :root,  Proc.new { ProblemChild.root }
@@ -57,7 +48,7 @@ module ProblemChild
 
     get "/" do
       if session[:form_data]
-        issue = create_issue
+        issue = uploads.empty? ? create_issue : create_pull_request
         session[:form_data] = nil
         access = repo_access?
       else
@@ -69,7 +60,7 @@ module ProblemChild
     end
 
     post "/" do
-      session[:form_data] = params.to_json
+      cache_form_data
       auth! unless anonymous_submissions?
       halt redirect "/"
     end
