@@ -75,7 +75,14 @@ or as a checkbox:
 
 ## Creating pull requests
 
-Problem child can also be used to create pull requests. Simply add one or more file inputs to your form. The uploaded files will be committed to a newly created feature branch, and a pull request will be created against the repo's primary branch with the rest of the form content.
+Problem child can also be used to create pull requests. Simply add one or more file inputs to your form. The uploaded files will be committed to a newly created feature branch, and a pull request will be created against the repo's primary branch with the rest of the form content. You'll also want to change the form type to `enctype="multipart/form-data"`.
+
+```html
+<form method="post" enctype="multipart/form-data">
+  <input type="file" name="file" />
+  <input type="submit" />
+</form>
+```
 
 ## Contributing
 
