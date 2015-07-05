@@ -27,10 +27,5 @@
     "GITHUB_ORG_ID": {
       "description": "The numeric Team ID (e.g., 1234) if you'd like all users to authenticate against a GitHub Team prior to being presented the form"
     }
-  },
-  "buildpacks": [
-    {
-      "url": "https://github.com/heroku/heroku-buildpack-ruby"
-    }
-  ]
+  }
 }
