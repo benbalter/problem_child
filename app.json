@@ -1,0 +1,31 @@
+{
+  "name": "Problem Child",
+  "description": "Allows authenticated or anonymous users to fill out a standard web form to creat GitHub issues.",
+  "repository": "https://github.com/benbalter/problem_child",
+  "addons": [
+    "heroku-redis:hobby-dev"
+  ],
+  "env": {
+    "GITHUB_CLIENT_ID": {
+      "description": "The ID of your GitHub OAuth application, created via https://github.com/settings/applications/new",
+      "required": "true"
+    },
+    "GITHUB_CLIENT_SECRET": {
+      "description": "The secret key of your GitHub OAuth application, created via https://github.com/settings/applications/new",
+      "required": "true"
+    },
+    "GITHUB_REPO": {
+      "description": "The repository against which to open issues submitted via Problem Child",
+      "required": "true"
+    },
+    "GITHUB_TOKEN": {
+      "description": "A personal access token for a bot account with the ability to create an issue in the GITHUB_REPO if you would like all submissions to be anonymous"
+    },
+    "GITHUB_TEAM_ID": {
+      "description": "The GitHub Org ID e.g, @whitehouse if you'd like all users to authenticate against a GitHub Org prior to being presented the form"
+    },
+    "GITHUB_ORG_ID": {
+      "description": "The numeric Team ID (e.g., 1234) if you'd like all users to authenticate against a GitHub Team prior to being presented the form"
+    }
+  }
+}
