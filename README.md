@@ -2,7 +2,7 @@
 
 Allows authenticated or anonymous users to fill out a standard web form to create GitHub issues.
 
-[![Build Status](https://travis-ci.org/benbalter/problem_child.svg)](https://travis-ci.org/benbalter/problem_child)
+[![Build Status](https://travis-ci.org/benbalter/problem_child.svg)](https://travis-ci.org/benbalter/problem_child) [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 
 ## How it works
 
