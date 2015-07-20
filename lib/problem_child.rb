@@ -24,6 +24,14 @@ module ProblemChild
     @views_dir = dir
   end
 
+  def self.public_dir
+    @public_dir ||= File.expand_path "public", ProblemChild.root
+  end
+
+  def self.public_dir=(dir)
+    @public_dir = dir
+  end
+
   class App < Sinatra::Base
 
     include ProblemChild::Helpers
@@ -44,7 +52,7 @@ module ProblemChild
 
     set :views, Proc.new { ProblemChild.views_dir }
     set :root,  Proc.new { ProblemChild.root }
-    set :public_folder, Proc.new { File.expand_path "public", ProblemChild.root }
+    set :public_folder, Proc.new { ProblemChild.public_dir }
 
     get "/" do
       if session[:form_data]
