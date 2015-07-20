@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rack-ssl-enforcer", "~> 0.2"
   spec.add_dependency "sinatra_auth_github", "~> 1.0"
   spec.add_dependency "activesupport", "~> 4.2"
-  spec.add_dependency "rack", "1.5.2"
+  spec.add_dependency "rack", "1.6"
   spec.add_dependency "redis", "~> 3.2"
   spec.add_dependency "moneta", "~> 0.8"
 
