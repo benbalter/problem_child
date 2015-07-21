@@ -25,6 +25,10 @@ module ProblemChild
       halt erb template, :layout => :layout, :locals => locals.merge({ :template => template })
     end
 
+    def issue_title
+      form_data["title"]
+    end
+
     def issue_body
       form_data.reject { |key, value| key == "title" || value.empty? || key == "labels" || value.is_a?(Hash) }.map { |key,value| "* **#{key.humanize}**: #{value}"}.join("\n")
     end

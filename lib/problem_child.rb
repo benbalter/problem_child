@@ -55,16 +55,23 @@ module ProblemChild
     set :public_folder, Proc.new { ProblemChild.public_dir }
 
     get "/" do
+      flash = nil
+      issue = nil
+      access = false
+
       if session[:form_data]
-        issue = uploads.empty? ? create_issue : create_pull_request
-        session[:form_data] = nil
-        access = repo_access?
+        if issue_title.empty?
+          flash = 'Please enter a title.'
+        else
+          issue = uploads.empty? ? create_issue : create_pull_request
+          session[:form_data] = nil
+          access = repo_access?
+        end
       else
-        issue = nil
-        access = false
         auth!
       end
-      halt erb :form, :layout => :layout, :locals => { :repo => repo, :anonymous => anonymous_submissions?, :issue => issue, :access => access }
+
+      halt erb :form, :layout => :layout, :locals => { :repo => repo, :anonymous => anonymous_submissions?, :flash => flash, :issue => issue, :access => access }
     end
 
     post "/" do
