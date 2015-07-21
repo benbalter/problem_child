@@ -5,6 +5,10 @@
 <% end %>
 </h1>
 
+<div class="alert alert-warning alert-recaptcha hidden" role="alert">
+  Please verify that you are not a robot.
+</div>
+
 <% if issue %>
   <div class="alert alert-success" role="alert">
     Your issue was successfully submitted<% if access %> as <a href="http://github.com/<%= repo %>/issues/<%= issue %>"><%= repo %>#<%= issue %></a><% end %>.
@@ -20,6 +24,10 @@
     <label for="body">Body</label>
     <textarea class="form-control" rows="10" id="body" name="body"></textarea>
   </div>
+
+  <% if recaptcha.present? %>
+    <div class="g-recaptcha" data-sitekey="<%= recaptcha %>"></div>
+  <% end %>
 
   <button type="submit" class="btn btn-default">Submit</button>
 </form>

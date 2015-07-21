@@ -17,6 +17,10 @@ module ProblemChild
       end
     end
 
+    def recaptcha
+      ENV["RECAPTCHA_SITE_KEY"] unless ENV["RECAPTCHA_SITE_KEY"].nil? || ENV["RECAPTCHA_SITE_KEY"].to_s.empty?
+    end
+
     def client
       @client ||= Octokit::Client.new :access_token => token
     end
