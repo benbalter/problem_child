@@ -49,7 +49,7 @@ You must also set **one** of the following:
 
 By default, Problem Child will prompt the user with a simple form that contains only the title and body. If you'd like to customize the form, you must do the following:
 
-1. Create a new folder called `views`
+1. Create a new directory called `views`
 2. Create a `layout.erb` and `form.erb`
 3. Customize both the layout and form as a standard HTML form. Check out [these examples](lib/problem_child/views) to get started.
 4. Add the following (middle) line to your `config.ru` file:
@@ -75,7 +75,7 @@ or as a checkbox:
 <input type="checkbox" name="labels[]" value="suggestion" />
 ```
 
-*Pro-tip III*: Set the public folder
+*Pro-tip III*: Set the public directory
 
 By default Problem child points to an internal public directory which includes jQuery and Twitter Bootstrap. You can add them to your custom layout.erb:
 
@@ -85,7 +85,7 @@ By default Problem child points to an internal public directory which includes j
 <script src="/vender/jquery/dist/jquery.min.js"></script>
 ```
 
-However, if you would like to add more files to your form app (e.g., favicon, custom CSS & JS files, etc.), you can redefine where the public directiry points:
+However, if you would like to add more files to your form app (e.g., favicon, custom CSS & JS files, etc.), you can redefine where the public directory points:
 
 ```ruby
 require "problem_child"
@@ -94,7 +94,7 @@ ProblemChild.public_dir = Rails.public_path
 run ProblemChild::App
 ```
 
-Note that you will lose access to the bundled jQuery & Bootstrap libraries and will have to put copies into your new public folder to use them.
+Note that you will lose access to the bundled jQuery & Bootstrap libraries and will have to put copies into your new public directory to use them.
 
 ## Creating pull requests
 
