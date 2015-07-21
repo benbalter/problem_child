@@ -14,11 +14,13 @@ Allows authenticated or anonymous users to fill out a standard web form to creat
 
 1. Create a `Gemfile` and add `gem "problem_child"`
 2. Create a `config.ru` file and add the following:
-  ```ruby
-  require "problem_child"
-  run ProblemChild::App
-  ```
-3. Follow the configuration options below
+
+```ruby
+require "problem_child"
+run ProblemChild::App
+```
+
+Then, follow the configuration options below.
 
 ## Requirements
 
@@ -73,6 +75,27 @@ or as a checkbox:
 <input type="checkbox" name="labels[]" value="suggestion" />
 ```
 
+*Pro-tip III*: Set the public folder
+
+By default Problem child points to an internal public directory which includes jQuery and Twitter Bootstrap. You can add them to your custom layout.erb:
+
+```html
+<link href="/vendor/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<script src="/vender/jquery/dist/jquery.min.js"></script>
+```
+
+However, if you would like to add more files to your form app (e.g., favicon, custom CSS & JS files, etc.), you can redefine where the public directiry points:
+
+```ruby
+require "problem_child"
+ProblemChild.views_dir = "/path/to/your/views/directory"
+ProblemChild.public_dir = Rails.public_path
+run ProblemChild::App
+```
+
+Note that you will lose access to the bundled jQuery & Bootstrap libraries and will have to put copies into your new public folder to use them.
+
 ## Creating pull requests
 
 Problem child can also be used to create pull requests. Simply add one or more file inputs to your form. The uploaded files will be committed to a newly created feature branch, and a pull request will be created against the repo's primary branch with the rest of the form content. You'll also want to change the form type to `enctype="multipart/form-data"`.
@@ -91,3 +114,4 @@ Problem child can also be used to create pull requests. Simply add one or more f
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
+
