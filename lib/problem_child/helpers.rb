@@ -17,6 +17,10 @@ module ProblemChild
       end
     end
 
+    def recaptcha
+      ENV["RECAPTCHA_SITE_KEY"] unless ENV["RECAPTCHA_SITE_KEY"].nil? || ENV["RECAPTCHA_SITE_KEY"].to_s.empty?
+    end
+
     def client
       @client ||= Octokit::Client.new :access_token => token
     end
@@ -30,7 +34,11 @@ module ProblemChild
     end
 
     def issue_body
-      form_data.reject { |key, value| key == "title" || value.empty? || key == "labels" || value.is_a?(Hash) }.map { |key,value| "* **#{key.humanize}**: #{value}"}.join("\n")
+      form_data.reject { |key, value|
+        key == "title" || value.empty? || key == "labels" || value.is_a?(Hash)
+      }.except( "g-recaptcha-response" ).map { |key, value|
+        "* **#{key.humanize}**: #{value}"
+      }.join("\n")
     end
 
     # abstraction to allow cached form data to be used in place of default params
