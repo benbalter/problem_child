@@ -11,6 +11,12 @@
   </div>
 <% end %>
 
+<% if flash %>
+  <div class="alert alert-info" role="alert">
+    <%= flash %>
+  </div>
+<% end %>
+
 <form method="post">
   <div class="form-group">
     <label for="title">Title</label>
