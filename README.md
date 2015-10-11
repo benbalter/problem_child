@@ -14,11 +14,13 @@ Allows authenticated or anonymous users to fill out a standard web form to creat
 
 1. Create a `Gemfile` and add `gem "problem_child"`
 2. Create a `config.ru` file and add the following:
-  ```ruby
-  require "problem_child"
-  run ProblemChild::App
-  ```
-3. Follow the configuration options below
+
+```ruby
+require "problem_child"
+run ProblemChild::App
+```
+
+Then, follow the configuration options below.
 
 ## Requirements
 
@@ -41,13 +43,19 @@ You must also set **one** of the following:
 * `GITHUB_ORG_ID` - The GitHub Org ID e.g, `@whitehouse` if you'd like all users to authenticate against a GitHub Org prior to being presented the form
 * `GITHUB_TEAM_ID` - The numeric Team ID (e.g., 1234) if you'd like all users to authenticate against a GitHub Team prior to being presented the form
 
+You can also set a variable to enable Google reCAPTCHA support:
+
+* `REACAPTCHA_SITE_KEY` - The key created for your reCAPTCHA site via https://www.google.com/recaptcha/admin
+
+If set, the Problem child default form will include a bit of JavaScript to test if the reCAPTCHA test was passed before submitting.
+
 *Pro-tip*: When developing locally, you can add these values to a `.env` file in the project root, and they will be automatically read in on load
 
 ## Customizing
 
 By default, Problem Child will prompt the user with a simple form that contains only the title and body. If you'd like to customize the form, you must do the following:
 
-1. Create a new folder called `views`
+1. Create a new directory called `views`
 2. Create a `layout.erb` and `form.erb`
 3. Customize both the layout and form as a standard HTML form. Check out [these examples](lib/problem_child/views) to get started.
 4. Add the following (middle) line to your `config.ru` file:
@@ -73,6 +81,27 @@ or as a checkbox:
 <input type="checkbox" name="labels[]" value="suggestion" />
 ```
 
+*Pro-tip III*: Set the public directory
+
+By default Problem child points to an internal public directory which includes jQuery and Twitter Bootstrap. You can add them to your custom layout.erb:
+
+```html
+<link href="/vendor/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<script src="/vender/jquery/dist/jquery.min.js"></script>
+```
+
+However, if you would like to add more files to your form app (e.g., favicon, custom CSS & JS files, etc.), you can redefine where the public directory points:
+
+```ruby
+require "problem_child"
+ProblemChild.views_dir = "/path/to/your/views/directory"
+ProblemChild.public_dir = Rails.public_path
+run ProblemChild::App
+```
+
+Note that you will lose access to the bundled jQuery & Bootstrap libraries and will have to put copies into your new public directory to use them.
+
 ## Creating pull requests
 
 Problem child can also be used to create pull requests. Simply add one or more file inputs to your form. The uploaded files will be committed to a newly created feature branch, and a pull request will be created against the repo's primary branch with the rest of the form content. You'll also want to change the form type to `enctype="multipart/form-data"`.
@@ -91,3 +120,4 @@ Problem child can also be used to create pull requests. Simply add one or more f
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
+
