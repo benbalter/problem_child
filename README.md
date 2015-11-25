@@ -43,12 +43,6 @@ You must also set **one** of the following:
 * `GITHUB_ORG_ID` - The GitHub Org ID e.g, `@whitehouse` if you'd like all users to authenticate against a GitHub Org prior to being presented the form
 * `GITHUB_TEAM_ID` - The numeric Team ID (e.g., 1234) if you'd like all users to authenticate against a GitHub Team prior to being presented the form
 
-You can also set a variable to enable Google reCAPTCHA support:
-
-* `REACAPTCHA_SITE_KEY` - The key created for your reCAPTCHA site via https://www.google.com/recaptcha/admin
-
-If set, the Problem child default form will include a bit of JavaScript to test if the reCAPTCHA test was passed before submitting.
-
 *Pro-tip*: When developing locally, you can add these values to a `.env` file in the project root, and they will be automatically read in on load
 
 ## Customizing
