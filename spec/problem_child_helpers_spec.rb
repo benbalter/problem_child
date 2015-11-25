@@ -32,6 +32,10 @@ describe "ProblemChild::Helpers" do
     with_env "GITHUB_TOKEN", "asdf" do
       expect(@helper.anonymous_submissions?).to be(true)
     end
+
+    with_env "GITHUB_TOKEN", "" do
+      expect(@helper.anonymous_submissions?).to be(false)
+    end
   end
 
   it "knows not to allow anonymous submisssions when no token is passed" do
@@ -240,7 +244,7 @@ describe "ProblemChild::Helpers" do
 
       pr = stub_request(:post, "https://api.github.com/repos/benbalter/test-repo-ignore-me/pulls").
          with(:body => "{\"labels\":null,\"base\":\"master\",\"head\":\"title\",\"title\":\"title\",\"body\":\"* **Foo**: bar\"}")
-         
+
       with_env "GITHUB_TOKEN", "1234" do
         with_env "GITHUB_REPO", "benbalter/test-repo-ignore-me" do
           path = File.expand_path "./fixtures/file.txt", File.dirname(__FILE__)

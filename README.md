@@ -24,24 +24,27 @@ Then, follow the configuration options below.
 
 ## Requirements
 
-You'll need to have [Redis](http://redis.io/) running.
+If you have OAuth (e.g., non-anonymous submission), you'll need to have [Redis](http://redis.io/) running to properly maintain sessions and support submissions larger than 4k:
 
-On OS X, run `brew install redis` to install, followed by `redis-server` to run the redis server.
+On OS X, run `brew install redis` to install, followed by `redis-server` to run the redis server. The site should work fine, but for tests to pass, you'll want to add `REDIS_URL=redis://localhost:6379` to your `.env` file.
 
-On Heroku you'll want to run `heroku addons:create heroku-redis:hobby-dev` to add a free Redis instance to your app.
+On Heroku you'll want to run `heroku addons:create heroku-redis:hobby-dev` to add a free Redis instance to your app (Heroku will set `REDIS_URL` for you).
 
 ## Configuring
 
-You must set the following as environmental variables:
+First, you must set the following environmental variable:
 
-* `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` - Created via [github.com/settings/applications/new](https://github.com/settings/applications/new)
 * `GITHUB_REPO` - the repo to open the issue against in the form of `owner/repo`
 
 You must also set **one** of the following:
 
 * `GITHUB_TOKEN` - A personal access token for a bot account with the ability to create an issue in the `GITHUB_REPO` if you would like all submissions to be anonymous
-* `GITHUB_ORG_ID` - The GitHub Org ID e.g, `@whitehouse` if you'd like all users to authenticate against a GitHub Org prior to being presented the form
+* `GITHUB_ORG_ID` - The GitHub Org ID e.g, `@whitehouse` if you'd like all users to authenticate against a GitHub Org prior to being presented the form, or
 * `GITHUB_TEAM_ID` - The numeric Team ID (e.g., 1234) if you'd like all users to authenticate against a GitHub Team prior to being presented the form
+
+If you are using OAuth Authentication (e.g., you set `GITHUB_ORG_ID` or `GITHUB_TEAM_ID` so that the user submits as themselves), you must also set the following as environmental variables:
+
+* `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` - Created via [github.com/settings/applications/new](https://github.com/settings/applications/new)
 
 *Pro-tip*: When developing locally, you can add these values to a `.env` file in the project root, and they will be automatically read in on load
 
@@ -114,4 +117,3 @@ Problem child can also be used to create pull requests. Simply add one or more f
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
-

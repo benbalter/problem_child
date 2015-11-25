@@ -13,3 +13,4 @@ env:
   global:
     GITHUB_CLIENT_ID: "1234"
     GITHUB_CLIENT_SECRET: "1234"
+    REDIS_URL: "redis://127.0.0.1:6379"
