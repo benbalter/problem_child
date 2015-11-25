@@ -40,7 +40,11 @@ module ProblemChild
       :scopes => "repo,read:org"
     }
 
-    use Rack::Session::Moneta, store: :Redis, url: ENV["REDIS_URL"]
+    if ENV["REDIS_URL"] && !ENV["REDIS_URL"].to_s.empty?
+      use Rack::Session::Moneta, store: :Redis, url: ENV["REDIS_URL"]
+    else
+      use Rack::Session::Cookie
+    end
 
     configure :production do
       require 'rack-ssl-enforcer'
