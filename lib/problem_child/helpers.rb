@@ -1,56 +1,55 @@
 module ProblemChild
   module Helpers
-
     def repo
-      ENV["GITHUB_REPO"]
+      ENV['GITHUB_REPO']
     end
 
     def anonymous_submissions?
-      !!(ENV["GITHUB_TOKEN"] && !ENV["GITHUB_TOKEN"].to_s.empty?)
+      !ENV['GITHUB_TOKEN'].to_s.empty?
     end
 
     def token
       if anonymous_submissions?
-        ENV["GITHUB_TOKEN"]
+        ENV['GITHUB_TOKEN']
       elsif !github_user.nil?
         github_user.token
       end
     end
 
     def client
-      @client ||= Octokit::Client.new :access_token => token
+      @client ||= Octokit::Client.new access_token: token
     end
 
-    def render_template(template, locals={})
-      halt erb template, :layout => :layout, :locals => locals.merge({ :template => template })
+    def render_template(template, locals = {})
+      halt erb template, layout: :layout, locals: locals.merge(template: template)
     end
 
     def issue_title
-      form_data["title"]
+      form_data['title']
     end
 
     def issue_body
-      form_data.reject { |key, value| key == "title" || value.empty? || key == "labels" || value.is_a?(Hash) }.map { |key,value| "* **#{key.humanize}**: #{value}"}.join("\n")
+      form_data.reject { |key, value| key == 'title' || value.empty? || key == 'labels' || value.is_a?(Hash) }.map { |key, value| "* **#{key.humanize}**: #{value}" }.join("\n")
     end
 
     # abstraction to allow cached form data to be used in place of default params
     def form_data
-      session["form_data"].nil? ? params : JSON.parse(session["form_data"])
+      session['form_data'].nil? ? params : JSON.parse(session['form_data'])
     end
 
     def labels
-      form_data["labels"].join(",") if form_data["labels"]
+      form_data['labels'].join(',') if form_data['labels']
     end
 
     def uploads
-      form_data.select do |key, value|
-        value.is_a?(Hash) && ( value.has_key?("filename") || value.has_key?(:filename) )
+      form_data.select do |_key, value|
+        value.is_a?(Hash) && (value.key?('filename') || value.key?(:filename))
       end
     end
 
     def create_issue
-      issue = client.create_issue(repo, form_data["title"], issue_body, :labels => labels)
-      issue["number"] if issue
+      issue = client.create_issue(repo, form_data['title'], issue_body, labels: labels)
+      issue['number'] if issue
     end
 
     # Returns array of Octokit branch objects
@@ -72,11 +71,11 @@ module ProblemChild
     # Starts with patch-1 and keeps going until it finds one not taken
     def patch_branch
       num = 1
-      branch_name = form_data["title"].parameterize
+      branch_name = form_data['title'].parameterize
       return branch_name unless branch_exists?(branch_name)
       branch = "#{branch_name}-#{num}"
-      while branch_exists?(branch) do
-        num = num + 1
+      while branch_exists?(branch)
+        num += 1
         branch = "#{branch_name}-#{num}"
       end
       branch
@@ -97,19 +96,19 @@ module ProblemChild
             repo,
             upload[:filename],
             "Create #{upload[:filename]}",
-            :branch => branch,
-            :file => upload[:tempfile]
+            branch: branch,
+            file: upload[:tempfile]
           )
           session["file_#{key}"] = nil
         end
       end
-      pr = client.create_pull_request(repo, "master", branch, form_data["title"], issue_body, :labels => labels)
-      pr["number"] if pr
+      pr = client.create_pull_request(repo, 'master', branch, form_data['title'], issue_body, labels: labels)
+      pr['number'] if pr
     end
 
     def repo_access?
       return true unless anonymous_submissions?
-      !client.repository(repo)["private"]
+      !client.repository(repo)['private']
     rescue
       false
     end
@@ -122,8 +121,7 @@ module ProblemChild
       elsif ENV['GITHUB_ORG_ID']
         github_organization_authenticate!(ENV['GITHUB_ORG_ID'])
       else
-        raise "Must define GITHUB_TEAM_ID, GITHUB_ORG_ID, OR GITHUB_TOKEN"
-        halt 401
+        raise 'Must define GITHUB_TEAM_ID, GITHUB_ORG_ID, OR GITHUB_TOKEN'
       end
     end
   end
