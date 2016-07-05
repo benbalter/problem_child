@@ -61,18 +61,6 @@ describe "ProblemChild::Helpers" do
     end
   end
 
-  it "caches the form data" do
-    @helper.params = {"title" => "title", "foo" => "bar"}
-    @helper.cache_form_data
-    expect(@helper.form_data["foo"]).to eql("bar")
-  end
-
-  it "grabs the form data from the session" do
-    expected = {"title" => "title", "foo" => "bar"}
-    @helper.session["form_data"] = expected.to_json
-    expect(@helper.form_data).to eql(expected)
-  end
-
   it "grabs the form data when posted" do
     expected = {"title" => "title", "foo" => "bar"}
     @helper.params = expected
@@ -219,18 +207,6 @@ describe "ProblemChild::Helpers" do
       end
     end
 
-    it "caches uploads" do
-      path = File.expand_path "./fixtures/file.txt", File.dirname(__FILE__)
-      @helper.params = {
-        "title" => "title", "some_file" => {
-          :filename => "file.txt",
-          :tempfile => File.new(path) 
-          }
-        }
-      @helper.cache_form_data
-      expect(@helper.session["file_some_file"]).to eql("FOO\n")
-    end
-
     it "creates the pull request" do
       stub_request(:get, "https://api.github.com/repos/benbalter/test-repo-ignore-me").
          to_return(:status => 200, :body => {:default_branch => "master"}.to_json,
@@ -244,8 +220,12 @@ describe "ProblemChild::Helpers" do
          with(:body => "{\"ref\":\"refs/heads/title\",\"sha\":\"123\"}").
          to_return(:status => 200)
 
-      push = stub_request(:put, "https://api.github.com/repos/benbalter/test-repo-ignore-me/contents/").
-         with(:body => "{\"branch\":\"title\",\"content\":\"Rk9PCg==\",\"message\":\"Create \"}")
+      push = stub_request(:put, "https://api.github.com/repos/benbalter/test-repo-ignore-me/contents/file.txt").
+         with(:body => {
+           branch: "title",
+           content: "Rk9PCg==",
+           message: "Create file.txt"
+        }.to_json)
 
       pr = stub_request(:post, "https://api.github.com/repos/benbalter/test-repo-ignore-me/pulls").
          with(:body => "{\"labels\":null,\"base\":\"master\",\"head\":\"title\",\"title\":\"title\",\"body\":\"* **Foo**: bar\"}")
@@ -257,7 +237,6 @@ describe "ProblemChild::Helpers" do
             :filename => "file.txt",
             :tempfile => File.new(path)
           }, "foo" => "bar" }
-          @helper.cache_form_data
           @helper.create_pull_request
           expect(push).to have_been_requested
           expect(pr).to have_been_requested
