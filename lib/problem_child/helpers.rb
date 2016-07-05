@@ -116,7 +116,7 @@ module ProblemChild
 
     def cache_form_data
       uploads.each do |key, upload|
-        session["file_#{key}"] = File.open(upload[:tempfile]).read
+        session["file_#{key}"] = upload[:tempfile].read
       end
       session[:form_data] = params.to_json
     end
