@@ -22,14 +22,6 @@ run ProblemChild::App
 
 Then, follow the configuration options below.
 
-## Requirements
-
-If you have OAuth (e.g., non-anonymous submission), you'll need to have [Redis](http://redis.io/) running to properly maintain sessions and support submissions larger than 4k:
-
-On OS X, run `brew install redis` to install, followed by `redis-server` to run the redis server. The site should work fine, but for tests to pass, you'll want to add `REDIS_URL=redis://localhost:6379` to your `.env` file.
-
-On Heroku you'll want to run `heroku addons:create heroku-redis:hobby-dev` to add a free Redis instance to your app (Heroku will set `REDIS_URL` for you).
-
 ## Configuring
 
 First, you must set the following environmental variable:

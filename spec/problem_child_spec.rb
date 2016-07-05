@@ -89,7 +89,6 @@ describe "logged in user" do
           to_return(:status => 200, :body => '{"number": 1234}', :headers => { 'Content-Type' => 'application/json' })
 
         post "/", :title => "title", :foo => "bar"
-        follow_redirect!
 
         expect(last_response.status).to eql(200)
         expected = '<a href="http://github.com/benbalter/test-repo-ignore-me/issues/1234">benbalter/test-repo-ignore-me#1234</a>'
@@ -136,7 +135,6 @@ describe "logged out user" do
           to_return(:status => 200, :body => '{"private": true}', :headers => { 'Content-Type' => 'application/json' })
 
         post "/", :title => "title", :foo => "bar"
-        follow_redirect!
 
         expect(last_response.status).to eql(200)
         expect(last_response.body).to match(/Your issue was successfully submitted\./)
@@ -157,7 +155,6 @@ describe "logged out user" do
           to_return(:status => 200, :body => '{"private": true}', :headers => { 'Content-Type' => 'application/json' })
 
         post "/", :title => "title", :foo => long_string
-        follow_redirect!
 
         expect(last_response.status).to eql(200)
         expect(last_response.body).to match(/Your issue was successfully submitted\./)

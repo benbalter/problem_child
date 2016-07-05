@@ -3,8 +3,6 @@ require 'sinatra'
 require 'sinatra_auth_github'
 require 'dotenv'
 require 'json'
-require 'redis'
-require 'rack/session/moneta'
 require 'active_support'
 require 'active_support/core_ext/string'
 require "problem_child/version"
@@ -40,11 +38,10 @@ module ProblemChild
       :scopes => "repo,read:org"
     }
 
-    if ENV["REDIS_URL"] && !ENV["REDIS_URL"].to_s.empty?
-      use Rack::Session::Moneta, store: :Redis, url: ENV["REDIS_URL"]
-    else
-      use Rack::Session::Cookie
-    end
+    use Rack::Session::Cookie, {
+      http_only: true,
+      secret:    ENV['SESSION_SECRET'] || SecureRandom.hex
+    }
 
     configure :production do
       require 'rack-ssl-enforcer'
@@ -63,25 +60,23 @@ module ProblemChild
       issue = nil
       access = false
 
-      if session[:form_data]
-        if issue_title.empty?
-          flash = 'Please enter a title.'
-        else
-          issue = uploads.empty? ? create_issue : create_pull_request
-          session[:form_data] = nil
-          access = repo_access?
-        end
-      else
-        auth!
-      end
+      auth!
 
       halt erb :form, :layout => :layout, :locals => { :repo => repo, :anonymous => anonymous_submissions?, :flash => flash, :issue => issue, :access => access }
     end
 
     post "/" do
-      cache_form_data
       auth! unless anonymous_submissions?
-      halt redirect "/"
+
+      if issue_title.empty?
+        flash = 'Please enter a title.'
+      else
+        issue = uploads.empty? ? create_issue : create_pull_request
+        session[:form_data] = nil
+        access = repo_access?
+      end
+
+      halt erb :form, :layout => :layout, :locals => { :repo => repo, :anonymous => anonymous_submissions?, :flash => flash, :issue => issue, :access => access }
     end
   end
 end

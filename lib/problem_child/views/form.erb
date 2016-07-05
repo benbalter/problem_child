@@ -17,7 +17,8 @@
   </div>
 <% end %>
 
-<form method="post">
+<form method="post" enctype="multipart/form-data">
+  <input type="file" name="file" />
   <div class="form-group">
     <label for="title">Title</label>
     <input type="text" class="form-control" id="title" name="title" />

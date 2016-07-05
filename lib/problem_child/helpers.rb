@@ -95,10 +95,10 @@ module ProblemChild
         uploads.each do |key, upload|
           client.create_contents(
             repo,
-            upload["filename"],
-            "Create #{upload["filename"]}",
-            session["file_#{key}"],
-            :branch => branch
+            upload[:filename],
+            "Create #{upload[:filename]}",
+            :branch => branch,
+            :file => upload[:tempfile]
           )
           session["file_#{key}"] = nil
         end
@@ -112,13 +112,6 @@ module ProblemChild
       !client.repository(repo)["private"]
     rescue
       false
-    end
-
-    def cache_form_data
-      uploads.each do |key, upload|
-        session["file_#{key}"] = File.open(upload[:tempfile]).read
-      end
-      session[:form_data] = params.to_json
     end
 
     def auth!
