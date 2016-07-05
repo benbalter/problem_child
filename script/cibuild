@@ -2,4 +2,5 @@
 
 set -e
 bundle exec rake spec
+bundle exec rubocop -S -D
 bundle exec gem build problem_child.gemspec
