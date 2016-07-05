@@ -43,7 +43,10 @@ module ProblemChild
     if ENV["REDIS_URL"] && !ENV["REDIS_URL"].to_s.empty?
       use Rack::Session::Moneta, store: :Redis, url: ENV["REDIS_URL"]
     else
-      use Rack::Session::Cookie
+      use Rack::Session::Cookie, {
+        http_only: true,
+        secret:    ENV['SESSION_SECRET'] || SecureRandom.hex
+      }
     end
 
     configure :production do

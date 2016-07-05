@@ -221,7 +221,12 @@ describe "ProblemChild::Helpers" do
 
     it "caches uploads" do
       path = File.expand_path "./fixtures/file.txt", File.dirname(__FILE__)
-      @helper.params = { "title" => "title", "some_file" => { :filename => "file.txt", :tempfile => path } }
+      @helper.params = {
+        "title" => "title", "some_file" => {
+          :filename => "file.txt",
+          :tempfile => File.new(path) 
+          }
+        }
       @helper.cache_form_data
       expect(@helper.session["file_some_file"]).to eql("FOO\n")
     end
@@ -248,7 +253,10 @@ describe "ProblemChild::Helpers" do
       with_env "GITHUB_TOKEN", "1234" do
         with_env "GITHUB_REPO", "benbalter/test-repo-ignore-me" do
           path = File.expand_path "./fixtures/file.txt", File.dirname(__FILE__)
-          @helper.params = { "title" => "title", "some_file" => { :filename => "file.txt", :tempfile => path }, "foo" => "bar" }
+          @helper.params = { "title" => "title", "some_file" => {
+            :filename => "file.txt",
+            :tempfile => File.new(path)
+          }, "foo" => "bar" }
           @helper.cache_form_data
           @helper.create_pull_request
           expect(push).to have_been_requested
