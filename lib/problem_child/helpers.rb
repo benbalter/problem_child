@@ -43,7 +43,7 @@ module ProblemChild
 
     def uploads
       form_data.select do |_key, value|
-        value.is_a?(Hash) && (value.key?('filename') || value.key?(:filename))
+        value.is_a?(Hash) && value.key?(:tempfile) && value[:tempfile].is_a?(Tempfile)
       end
     end
 

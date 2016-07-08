@@ -126,8 +126,13 @@ describe 'ProblemChild::Helpers' do
 
   context 'uploads' do
     it 'can identify uploads' do
-      @helper.params = { 'title' => 'title', 'file' => { filename: 'foo.md' } }
-      expect(@helper.uploads.first[0]).to eql('file')
+      Tempfile.open do |tempfile|
+        tempfile.write("FOO\n")
+        tempfile.rewind
+        file = { filename: 'foo.md', tempfile: tempfile }
+        @helper.params = { 'title' => 'title', 'file' => file }
+        expect(@helper.uploads.first[0]).to eql('file')
+      end
     end
 
     it 'fetches the branches' do
@@ -230,14 +235,17 @@ describe 'ProblemChild::Helpers' do
 
       with_env 'GITHUB_TOKEN', '1234' do
         with_env 'GITHUB_REPO', 'benbalter/test-repo-ignore-me' do
-          path = File.expand_path './fixtures/file.txt', File.dirname(__FILE__)
-          @helper.params = { 'title' => 'title', 'some_file' => {
-            filename: 'file.txt',
-            tempfile: File.new(path)
-          }, 'foo' => 'bar' }
-          @helper.create_pull_request
-          expect(push).to have_been_requested
-          expect(pr).to have_been_requested
+          Tempfile.open do |tempfile|
+            tempfile.write("FOO\n")
+            tempfile.rewind
+            @helper.params = { 'title' => 'title', 'some_file' => {
+              filename: 'file.txt',
+              tempfile: tempfile
+            }, 'foo' => 'bar' }
+            @helper.create_pull_request
+            expect(push).to have_been_requested
+            expect(pr).to have_been_requested
+          end
         end
       end
     end
