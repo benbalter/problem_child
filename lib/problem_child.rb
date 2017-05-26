@@ -45,9 +45,9 @@ module ProblemChild
     ENV['WARDEN_GITHUB_VERIFIER_SECRET'] ||= SecureRandom.hex
     register Sinatra::Auth::Github
 
-    set :views, proc { ProblemChild.views_dir }
-    set :root,  proc { ProblemChild.root }
-    set :public_folder, proc { ProblemChild.public_dir }
+    set :views, (proc { ProblemChild.views_dir })
+    set :root,  (proc { ProblemChild.root })
+    set :public_folder, (proc { ProblemChild.public_dir })
 
     get '/' do
       flash = nil
