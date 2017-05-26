@@ -73,7 +73,7 @@ describe 'ProblemChild::Helpers' do
   end
 
   it 'submits the issue' do
-    @helper.params = { 'title' => 'title', 'foo' => 'bar', 'labels' => %w(foo bar) }
+    @helper.params = { 'title' => 'title', 'foo' => 'bar', 'labels' => %w[foo bar] }
     with_env 'GITHUB_TOKEN', '1234' do
       with_env 'GITHUB_REPO', 'benbalter/test-repo-ignore-me' do
         stub = stub_request(:post, 'https://api.github.com/repos/benbalter/test-repo-ignore-me/issues')
@@ -120,7 +120,7 @@ describe 'ProblemChild::Helpers' do
   end
 
   it 'knows the labels' do
-    @helper.params['labels'] = %w(foo bar)
+    @helper.params['labels'] = %w[foo bar]
     expect(@helper.labels).to eql('foo,bar')
   end
 
