@@ -1,0 +1,26 @@
+{
+  "name": "problem_child",
+  "version": "1.0.0",
+  "description": "Allows authenticated or anonymous users to fill out a standard web form to create GitHub issues (and pull requests). Edit",
+  "main": "script/server",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "script/cibuild"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/benbalter/problem_child.git"
+  },
+  "author": "Ben Balter",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/benbalter/problem_child/issues"
+  },
+  "homepage": "https://github.com/benbalter/problem_child#readme",
+  "dependencies": {
+    "octicons": "^5.0.1",
+    "primer-css": "^6.0.0"
+  }
+}

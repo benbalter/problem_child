@@ -2,6 +2,8 @@
 .bundle
 Gemfile.lock
 .env
+node_modules
+package-lock.json
 
 #bower bloat
 lib/problem_child/public/vendor/bootstrap/grunt
