@@ -1,0 +1,14 @@
+#!/bin/sh
+# Update the vendored Primer CSS
+
+set -ex
+
+rm -rf ./lib/problem_child/public/vendor/primer
+mkdir -p ./lib/problem_child/public/vendor/primer
+
+npm update primer-css octicions
+
+cp ./node_modules/primer-css/build/build.css ./lib/problem_child/public/vendor/primer/primer.css
+
+rm -rf ./lib/problem_child/public/vendor/octicons
+cp -r ./node_modules/octicons/build/svg ./lib/problem_child/public/vendor/octicons
